@@ -1,20 +1,17 @@
-I will describe the source code and my process for testing it in this half page write up as stated in assignment sheet. First, I created the two files shm_fileuploader.c and
- shm_filedownloader.c. For the shm_fileuploader, I began by defining the max size of file at 50 MB as it was stated in assignment, and then added the filesharing struct that
- was shown in the assignment sheet. Next, I created the shared memory object and used ftruncate() to get it to the size of 50 MB. I then named the file sharing
- dbmart2_filesharing as required for accessing the shared memory. Next, I used mmap() to do the memory mapping, and upon completing that, the program asks the user to 
-input what the file is they wish to upload, and then I printed that back out to the user to ensure it was correct. I used scanf() to read in the file from user. Then I create
-file descriptor for it. After this I needed to open the file, I used fopen() to open it and then I used the fseek() and ftell() functions in order to determine what the size of
-the given file is. After I did this, I made sure to use rewind() function in order to go back to the very beginning of the file and avoid any issues. Finally, I utilized 
-fread() to read the content of the given file. Lastly I end everything with closing the file. I also ensured to check return values of most functions.
-After completing the uploader, I moved onto creating the downloader portion of the code. I began similar to the uploader by defining max size to 50 MB per the assignment
-directions and I also set up the correct file sharing struct again. The beginning of the source code for the downloader is quite similar to the uploader with code for the
-shared memory, ftruncate(), generating the file sharing struct, mmap(), etc. After adding all of those parts, I then used fopen() to open a new file which is used to
-download the user inputted file into. Once this is done, I checked if the file for download is available. If the file is available, the fwrite() is used to write the file
-content from the shared memory into the generated download file. After the contents of the uploaded file are written into the download file, it is closed. Then I used shm_unlink to unlink the shared memory to finish out the downloader. If the pointer to flag is not in the filesharing struct, then it indicates to me that file is not found or is not
-available in shared memory and this error is then output to the user. 
-Once I completed both uploader and downloader, I generated the Makefile to compile both source codes with -lrt linker. I tested the programs, by first running the uploader which asked what file to upload and I used a test text file for the upload. Then I ran the downloader which downloads the file for me and puts it into a new file. Then the 
-downloader indicated the info about the file inclduing size which told me that it had successfully downloader. I used the diff command to compare the two files, which 
-resulted in no differences meaning the file successfuly uploaded and downloaded with shared memory. I also tested it by running the downloader before the uploader and it
-indicated that file was not available in shared memory which makes sense considering it was never uploaded. I tested it multiple times with different files and it worked!
-I run the source code by compiling the two files and the running uploader first, and downloader after that, upon finishing the downloader has downloaded content as a file
-called newDownload. 
+This assignment was quite interesting to me to try and implement and I ended up having to spend quite a lot of time getting it to work.
+I am pretty happy with my outcome overall for this assignment. I was able to get everything working for the most part, including detecting
+different operators such as <*, &, and fg. The program is able to run continuously until the exit and executes commands depending on what was 
+specified by the user. For my code, I have two supporting functions. One parses through the reverse commands using strtok and finds the lists size.
+The other one is used to detect where the <* redirection symbol is located. For the main method, I first set up the initial aspects for my program
+and prompt the user with the dmart2> prompt. I used fgets to read in the input from the prompt line. All of this is to be executed within the do while
+loop that will run so long as exit is not entered. Within the loop I have added many if statements to scan through the command list and find out if the
+user has included any unique specified operators, such as foreground, background, and redirection. If one is specified, it will detect it and execute within
+that block of code. For executing the commands I used fork to create the child process for the command to be run in. I also have included many print statements
+to try and detect if any errors have occured. I ended up having to use execvp because it made more sense to me and worked better in my opinion. 
+Execvp and execlp are very similar except one passes args as a list and the other passes as array. Overall, the program runs quite well. Any basic foreground 
+commands run successfully, such as "ls", "pwd", "Makefile cat", "-l ls". Also, any redirections work successfully also, such as "out.txt <* Makefile cat"
+or "out2.txt <* -l ls". The foreground and background functionality also work for the most part but I didn't have enough time to perfect these commands.
+Overall, the program is quite good I think and I learned a lot from spending hours working on it. It successfully implements most all the functionality listed
+in the assignment and runs without error. The program compiles successfully without any errors also. Looking back on the program implementation, while
+it seemed a very difficult task at the beginning, it is actually a somewhat simple design where you just have to detect what the reverse command includes
+and then fork and execute in a child process according to what is to be done based on the users input.
